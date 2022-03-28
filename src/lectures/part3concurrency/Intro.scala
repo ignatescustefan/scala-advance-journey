@@ -18,23 +18,23 @@ object Intro extends App {
   // create a JVM thread => OS thread
   aThread.join() // blocks until aThread finishes running
 
-  val threadHello = new Thread( () => (1 to 5).foreach(_ => println("hello")))
+  val threadHello = new Thread(() => (1 to 5).foreach(_ => println("hello")))
 
-  val threadGoodBye = new Thread( () => (1 to 5).foreach(_ => println("bye")))
+  val threadGoodBye = new Thread(() => (1 to 5).foreach(_ => println("bye")))
 
   threadHello.start()
   threadGoodBye.start()
 
   // executors
   val pool = Executors.newFixedThreadPool(10)
-  pool.execute(()=> println("something in the thread pool"))
+  pool.execute(() => println("something in the thread pool"))
 
-  pool.execute(()=> {
+  pool.execute(() => {
     Thread.sleep(1000)
     println("done after 1 second")
   })
 
-  pool.execute(()=> {
+  pool.execute(() => {
     Thread.sleep(1000)
     println("almost done after 1 second")
     Thread.sleep(1000)
@@ -43,9 +43,9 @@ object Intro extends App {
 
   pool.shutdown()
   println(pool.isShutdown)
-//  pool.execute(()=> println("should not appear")) // this throws an exception in the calling thread
+  //  pool.execute(()=> println("should not appear")) // this throws an exception in the calling thread
 
-//  pool.shutdownNow()
+  //  pool.shutdownNow()
 
 
 }
