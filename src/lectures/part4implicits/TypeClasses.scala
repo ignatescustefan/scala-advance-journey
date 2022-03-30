@@ -1,5 +1,7 @@
 package lectures.part4implicits
 
+import lectures.part4implicits.TypeClasses.IntSerializer
+
 object TypeClasses extends App {
 
   trait HTMLWritable {
@@ -35,7 +37,7 @@ object TypeClasses extends App {
     def serialize(value: T): String
   }
 
-  object UserSerializer extends HTMLSerializer[User] {
+  implicit object UserSerializer extends HTMLSerializer[User] {
     override def serialize(user: User): String = s"<div>${user.name} (${user.age} yo) <a href=${user.email}/> </div>"
   }
 
@@ -62,6 +64,10 @@ object TypeClasses extends App {
     def action(value: T): String
   }
 
+  object MyTypeClassTemplate {
+    def apply[T](implicit instance: MyTypeClassTemplate[T]) = instance
+  }
+
   /**
    * Equality
    */
@@ -69,11 +75,43 @@ object TypeClasses extends App {
     def apply(a: T, b: T): Boolean
   }
 
-  object NameEquality extends Equal[User] {
+  implicit object NameEquality extends Equal[User] {
     override def apply(a: User, b: User): Boolean = a.name.equals(b.name)
   }
 
   object FullEquality extends Equal[User] {
     override def apply(a: User, b: User): Boolean = a.name == b.name && a.age == b.age && a.email == b.email
   }
+
+  // Part 2
+
+  object HTMLSerializer {
+    def serialize[T](value: T)(implicit serializer: HTMLSerializer[T]): String =
+      serializer.serialize(value)
+
+    def apply[T](implicit serializer: HTMLSerializer[T]) = serializer
+  }
+
+  implicit object IntSerializer extends HTMLSerializer[Int] {
+    override def serialize(value: Int): String = s"<div>$value<div>"
+  }
+
+
+  println(HTMLSerializer.serialize(34))
+  println(HTMLSerializer.serialize(user))
+
+  // access to the entire type class interface
+  println(HTMLSerializer[User].serialize(user))
+
+  // Exercise: implement the TC pattern for the equality
+
+  object Equal {
+    def apply[T](a:T, b:T)(implicit equalizer:Equal[T]):Boolean =
+      equalizer.apply(a,b)
+  }
+
+  val anotherJohn = User("John",12,"mail@test.com")
+
+  println(Equal[User](user,anotherJohn))
+  // Adhoc polymorphisms
 }
