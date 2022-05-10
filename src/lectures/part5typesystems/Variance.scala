@@ -88,4 +88,79 @@ object Variance extends App {
     - method arguments are in contravariant position
     - return types are in covariant position
    */
+
+  /**
+   * 1. Invariant, covariant, contravariant
+   * Parking[T](things: List[T]) {
+   * park(vehicle: T)
+   * impound(vehicles: List[T])
+   * checkVehicle(conditions: String): List[T]
+   * }
+   *
+   * 2. used some else's API IList[T]
+   * 2. Parking = monad!
+   *  - flatmap
+   */
+
+  class Vehicle
+
+  class Bike extends Vehicle
+
+  class Car extends Vehicle
+
+  class IList[T]
+
+  class IParking[T](vehicles: List[T]) {
+    def park(vehicle: T): IParking[T] = ???
+
+    def impound(vehicles: List[T]): IParking[T] = ???
+
+    def checkVehicle(conditions: String): List[T] = ???
+
+    def flatMap[S](f: T => IParking[S]): IParking[S] = ???
+  }
+
+  class CParking[+T](things: List[T]) {
+    def park[S >: T](vehicle: S): CParking[S] = ???
+
+    def impound[S >: T](vehicles: List[S]): CParking[S] = ???
+
+    def checkVehicle(conditions: String): List[T] = ???
+
+    def flatMap[S](f: T => CParking[S]): CParking[S] = ???
+  }
+
+  class XParking[-T](things: List[T]) {
+    def park(vehicle: T): XParking[T] = ???
+
+    def impound(vehicles: List[T]): XParking[T] = ???
+
+    def checkVehicle[S <: T](conditions: String): List[S] = ???
+
+    def flatMap[R <: T, S](f: R => XParking[S]): XParking[S] = ???
+  }
+
+  /*
+    Rule od thumb
+     - use covariance = collection of things
+     - use contravariance = group of actions
+   */
+
+  class CParking2[+T](things: IList[T]) {
+    def park[S >: T](vehicle: S): CParking2[S] = ???
+
+    def impound[S >: T](vehicles: IList[S]): CParking2[S] = ???
+
+    def checkVehicle[S >: T](conditions: String): IList[S] = ???
+  }
+
+  class XParking2[-T](things: IList[T]) {
+    def park(vehicle: T): XParking2[T] = ???
+
+    def impound[S <: T](vehicles: IList[S]): XParking2[S] = ???
+
+    def checkVehicle[S <: T](conditions: String): IList[S] = ???
+  }
+
+  // flatMap
 }
